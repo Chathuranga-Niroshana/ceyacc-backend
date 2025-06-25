@@ -80,7 +80,7 @@ class Teacher(BaseModel):
     teaching_experience: Optional[TeachingExperienceEnum] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Student(BaseModel):
@@ -89,7 +89,7 @@ class Student(BaseModel):
     is_completed: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class User(UserBase):
@@ -98,6 +98,27 @@ class User(UserBase):
     updated_at: datetime
     teacher: Optional[Teacher] = None
     student: Optional[Student] = None
+
+    class Config:
+        orm_mode = True
+
+
+class ScoreLevel(BaseModel):
+    id: int
+    name: str
+    image: str
+
+    class Config:
+        from_attributes = True
+
+
+class UserResponse(UserBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    teacher: Optional[Teacher] = None
+    student: Optional[Student] = None
+    level: Optional[ScoreLevel] = None
 
     class Config:
         orm_mode = True

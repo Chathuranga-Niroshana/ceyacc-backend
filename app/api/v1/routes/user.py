@@ -6,6 +6,7 @@ from app.crud.crud_user import crud_user
 from sqlalchemy.exc import IntegrityError
 from app.core.exceptions import ValidationError, DatabaseError
 from app.db.deps import get_db
+from app.services.user_response_builder import build_user_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -22,11 +23,7 @@ async def register_user(user_in: UserFullCreate, db: Session = Depends(get_db)):
         user = crud_user.create_user(db=db, user_in=user_in)
         logger.info(f"User registered successfully: {user.email}")
 
-        return {
-            "data": user,
-            "message": "User registered successfully",
-            "success": True,
-        }
+        return build_user_response(user, db)
 
     except ValidationError as e:
         logger.warning(f"Validation error in user registration: {str(e)}")

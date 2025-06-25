@@ -39,7 +39,7 @@ class User(Base):
 
     user_role = relationship("UserRoles", back_populates="users")
     teacher = relationship("Teacher", back_populates="user", uselist=False)
-    student = relationship("Student", back_populates="user")
+    student = relationship("Student", back_populates="user", uselist=False)
 
 
 class Teacher(Base):
