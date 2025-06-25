@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.user import UserRoles, ScoreLevels
+from app.models.system import UserRoles, ScoreLevels
 
 
 def init_default_roles(db: Session):
