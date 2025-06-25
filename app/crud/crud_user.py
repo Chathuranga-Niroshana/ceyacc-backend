@@ -74,6 +74,14 @@ class CRUDUser:
             logger.error(f"Unexpected error creating user: {str(e)}")
             raise DatabaseError("An unexpected error occurred")
 
+    # get user by id
+    def get_user_by_id(self, db: Session, user_id: int) -> Optional[UserSchema]:
+        try:
+            return db.get(User, user_id)
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching user by id: {str(e)}")
+            raise DatabaseError("Failed to fetch user by id")
+
     # get user by email
     def get_user_by_email(self, db: Session, email: str) -> Optional[UserSchema]:
         try:
