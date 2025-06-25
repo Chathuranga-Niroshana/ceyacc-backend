@@ -39,8 +39,9 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     role_id = Column(Integer, ForeignKey("user_roles.id"), default=1)
 
-    teacher = relationship("Teacher", back_populates="user", uselist=False)
     user_role = relationship("UserRoles", back_populates="users")
+    teacher = relationship("Teacher", back_populates="user", uselist=False)
+    student = relationship("Student", back_populates="user")
 
 
 class Teacher(Base):
@@ -52,3 +53,14 @@ class Teacher(Base):
     teaching_experience = Column(Enum(TeachingExperienceEnum), nullable=True)
 
     user = relationship("User", back_populates="teacher")
+
+
+class Student(Base):
+    __tablename__ = "student_data"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+    grade = Column(Integer)
+    is_completed = Column(Boolean, default=False)
+
+    user = relationship("User", back_populates="student")
