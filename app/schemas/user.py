@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
@@ -10,6 +10,13 @@ class SexEnum(str, Enum):
     OTHER = "Other"
 
 
+class TeachingExperienceEnum(str, Enum):
+    BEGINNER = "0-1 Years"
+    INTERMEDIATE = "1-4 Years"
+    EXPERIENCED = "4-10 Years"
+    MASTER = "10+ Years"
+
+
 class UserBase(BaseModel):
     image: Optional[str] = None
     cover_image: Optional[str] = None
@@ -18,7 +25,7 @@ class UserBase(BaseModel):
     email: EmailStr
     mobile_no: Optional[str] = None
     dob: Optional[datetime] = None
-    system_score: Optional[float] = None
+    system_score: Optional[float] = 10.0
     school_name: Optional[str] = None
     address_line_one: Optional[str] = None
     city: Optional[str] = None
@@ -29,12 +36,24 @@ class UserBase(BaseModel):
     role_id: Optional[int] = 1
 
 
-# Schema for creating a user (password required)
 class UserCreate(UserBase):
     password: str
 
 
-# Schema for updating a user (all optional)
+class TeacherCreate(BaseModel):
+    subjects_taught: List[str]
+    teaching_experience: Optional[TeachingExperienceEnum] = None
+
+
+class StudentCreate(BaseModel):
+    grade: int = Field(default=1, ge=1, le=13)
+
+
+class UserFullCreate(UserCreate):
+    teacher: Optional[TeacherCreate] = None
+    student: Optional[StudentCreate] = None
+
+
 class UserUpdate(BaseModel):
     image: Optional[str] = None
     cover_image: Optional[str] = None
@@ -44,7 +63,7 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
     mobile_no: Optional[str] = None
     dob: Optional[datetime] = None
-    system_score: Optional[float] = None
+    # system_score: Optional[float] = None
     school_name: Optional[str] = None
     address_line_one: Optional[str] = None
     city: Optional[str] = None
@@ -55,11 +74,30 @@ class UserUpdate(BaseModel):
     role_id: Optional[int] = None
 
 
-# Schema for response (output), including id and timestamps
+class Teacher(BaseModel):
+    id: int
+    subjects_taught: List[str]
+    teaching_experience: Optional[TeachingExperienceEnum] = None
+
+    class Config:
+        orm_mode = True
+
+
+class Student(BaseModel):
+    id: int
+    grade: int
+    is_completed: bool
+
+    class Config:
+        orm_mode = True
+
+
 class User(UserBase):
     id: int
     created_at: datetime
     updated_at: datetime
+    teacher: Optional[Teacher] = None
+    student: Optional[Student] = None
 
     class Config:
         orm_mode = True

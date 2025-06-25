@@ -60,7 +60,7 @@ class Student(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
-    grade = Column(Integer)
+    grade = Column(Integer, default=1)
     is_completed = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="student")
