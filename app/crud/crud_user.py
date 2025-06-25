@@ -12,17 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 class CRUDUser:
-    def _check_existing_user(self, db: Session, email: str, nic: str) -> Optional[User]:
-        existing_email = self.get_user_by_email(db, email)
-        if existing_email:
-            return existing_email
-        existing_nic = self.get_user_by_nic(db, nic)
-        if existing_nic:
-            return existing_nic
-        return None
 
     # register
-    def create_user(self, db: Session, *, user_in: UserFullCreate) -> UserSchema:
+    def create_user(self, db: Session, user_in: UserFullCreate) -> UserSchema:
         try:
             if user_in.role_id == ROLE_TEACHER and not user_in.teacher:
                 raise ValidationError("Teacher data is required")
@@ -61,7 +53,7 @@ class CRUDUser:
                 db.add(teacher)
             if user_in.student:
                 student = Student(
-                    user_id=user.id, grade=user_in.grade, is_completed=False
+                    user_id=user.id, grade=user_in.student.grade, is_completed=False
                 )
                 db.add(student)
             db.commit()
@@ -82,5 +74,32 @@ class CRUDUser:
             logger.error(f"Unexpected error creating user: {str(e)}")
             raise DatabaseError("An unexpected error occurred")
 
+    # get user by email
+    def get_user_by_email(self, db: Session, email: str) -> Optional[UserSchema]:
+        try:
+            return db.query(User).filter(User.email == email.lower().strip()).first()
 
-crud_user = CRUDUser
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching user by email: {str(e)}")
+            raise DatabaseError("Failed to fetch user")
+
+    # get user by nic
+    def get_user_by_nic(self, db: Session, nic: str) -> Optional[UserSchema]:
+        try:
+            return db.query(User).filter(User.nic == nic).first()
+
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching user by nic: {str(e)}")
+            raise DatabaseError("Failed to fetch user")
+
+    def _check_existing_user(self, db: Session, email: str, nic: str) -> Optional[User]:
+        existing_email = self.get_user_by_email(db, email)
+        if existing_email:
+            return existing_email
+        existing_nic = self.get_user_by_nic(db, nic)
+        if existing_nic:
+            return existing_nic
+        return None
+
+
+crud_user = CRUDUser()

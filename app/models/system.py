@@ -20,16 +20,3 @@ class ScoreLevels(Base):
     name = Column(String(50))
     image = Column(String(255))
     max_limit = Column(Integer)
-
-
-class SexEnum(enum.Enum):
-    MALE = "Male"
-    FEMALE = "Female"
-    OTHER = "Other"
-
-
-class TeachingExperienceEnum(enum.Enum):
-    BEGINNER = "0-1 Years"
-    INTERMEDIATE = "1-4 Years"
-    EXPERIENCED = "4-10 Years"
-    MASTER = "10+ years"

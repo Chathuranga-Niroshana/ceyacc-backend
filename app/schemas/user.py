@@ -5,9 +5,9 @@ from enum import Enum
 
 
 class SexEnum(str, Enum):
-    MALE = "Male"
-    FEMALE = "Female"
-    OTHER = "Other"
+    MALE = "male"
+    FEMALE = "female"
+    OTHER = "other"
 
 
 class TeachingExperienceEnum(str, Enum):

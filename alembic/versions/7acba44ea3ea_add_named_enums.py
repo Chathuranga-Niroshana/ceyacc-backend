@@ -1,8 +1,8 @@
-"""Add user and system models
+"""Add named enums
 
-Revision ID: 72be3c570c6d
-Revises: f97b43b5addf
-Create Date: 2025-06-25 10:04:04.534298
+Revision ID: 7acba44ea3ea
+Revises: 40374ca2538b
+Create Date: 2025-06-25 15:39:38.848390
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '72be3c570c6d'
-down_revision: Union[str, Sequence[str], None] = 'f97b43b5addf'
+revision: str = '7acba44ea3ea'
+down_revision: Union[str, Sequence[str], None] = '40374ca2538b'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
