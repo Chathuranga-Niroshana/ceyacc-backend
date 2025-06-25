@@ -9,10 +9,10 @@ from sqlalchemy import (
     Boolean,
     JSON,
 )
-from app.db.base import Base
-from system import SexEnum, TeachingExperienceEnum
-from datetime import datetime
 from sqlalchemy.orm import relationship
+from app.db.base import Base
+from datetime import datetime
+from app.models.system import SexEnum, TeachingExperienceEnum
 
 
 class User(Base):
