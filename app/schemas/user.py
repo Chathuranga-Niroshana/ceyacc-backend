@@ -122,3 +122,49 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class TeacherListResponse(BaseModel):
+    id: int
+    created_at: datetime
+    name: str
+    level: ScoreLevel
+    teacher: Teacher
+    system_score: float
+    school_name: str
+    address_line_one: str
+    city: str
+    province: str
+    dob: datetime
+    image: Optional[str] = None
+    cover_image: Optional[str] = None
+    bio: Optional[str] = None
+    is_verified: Optional[bool] = None
+    role_id: Optional[int] = None
+    sex: Optional[SexEnum] = None
+
+    class Config:
+        from_attributes = True
+
+
+class StudentListResponse(BaseModel):
+    id: int
+    created_at: datetime
+    name: str
+    level: ScoreLevel
+    student: Student
+    system_score: float
+    school_name: str
+    address_line_one: str
+    city: str
+    province: str
+    dob: datetime
+    image: Optional[str] = None
+    cover_image: Optional[str] = None
+    bio: Optional[str] = None
+    is_verified: Optional[bool] = None
+    role_id: Optional[int] = None
+    sex: Optional[SexEnum] = None
+
+    class Config:
+        from_attributes = True

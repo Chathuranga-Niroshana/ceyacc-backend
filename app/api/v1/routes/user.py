@@ -6,7 +6,11 @@ from app.crud.crud_user import crud_user
 from sqlalchemy.exc import IntegrityError
 from app.core.exceptions import ValidationError, DatabaseError, NotFoundError
 from app.db.deps import get_db
-from app.services.user_response_builder import build_user_response
+from app.services.user_response_builder import (
+    build_user_response,
+    build_student_list_response,
+    build_teacher_list_response,
+)
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -64,7 +68,7 @@ def get_teachers(db: Session = Depends(get_db)):
             return NotFoundError("Teachers not found")
         formatted_teachers = []
         for teacher in teachers:
-            formatted_teacher = build_user_response(teacher, db)
+            formatted_teacher = build_teacher_list_response(teacher, db)
             formatted_teachers.append(formatted_teacher)
 
         return formatted_teachers
@@ -82,7 +86,7 @@ def get_students(db: Session = Depends(get_db)):
             return NotFoundError("Students not found")
         formatted_students = []
         for student in students:
-            formatted_students.append(build_user_response(student, db))
+            formatted_students.append(build_student_list_response(student, db))
 
         return formatted_students
     except Exception as e:
