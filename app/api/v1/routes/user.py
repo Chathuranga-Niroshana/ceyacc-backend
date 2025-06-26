@@ -39,7 +39,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
         return build_user_response(user, db)
     except Exception as e:
         logger.error(f"Unexpected error fetching user by ID: {str(e)}")
-        raise DatabaseError("Unexpected error occurred while retrieving user")
+        raise DatabaseError("Unexpected error occurred while retrieving user by id")
 
 
 # get user by email
@@ -50,6 +50,24 @@ def get_user_by_email(email: str = Query(...), db: Session = Depends(get_db)):
         if not user:
             return NotFoundError("User with email not found")
         return build_user_response(user, db)
+    except Exception as e:
+        logger.error(f"Unexpected error fetching user by Email: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving user")
+
+
+# get teachers
+@router.get("/teachers")
+def get_teachers(db: Session = Depends(get_db)):
+    try:
+        teachers = crud_user.get_teachers(db)
+        if not teachers:
+            return NotFoundError("Teachers not found")
+        formatted_teachers = []
+        for teacher in teachers:
+            formatted_teacher = build_user_response(teacher, db)
+            formatted_teachers.append(formatted_teacher)
+
+        return formatted_teachers
     except Exception as e:
         logger.error(f"Unexpected error fetching user by Email: {str(e)}")
         raise DatabaseError("Unexpected error occurred while retrieving user")
