@@ -23,19 +23,10 @@ async def register_user(user_in: UserFullCreate, db: Session = Depends(get_db)):
 
     except ValidationError as e:
         logger.warning(f"Validation error in user registration: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    except DatabaseError as e:
-        logger.error(f"Database error in user registration: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to register user",
-        )
+        raise ValidationError(str(e))
     except Exception as e:
         logger.error(f"Unexpected error in user registration: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred",
-        )
+        raise DatabaseError("Unexpected error occurred while creating user")
 
 
 # get user by id
@@ -48,10 +39,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
         return build_user_response(user, db)
     except Exception as e:
         logger.error(f"Unexpected error fetching user by ID: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="An unexpected error occurred while retrieving the user",
-        )
+        raise DatabaseError("Unexpected error occurred while retrieving user")
 
 
 # get user by email
@@ -64,7 +52,4 @@ def get_user_by_email(email: str = Query(...), db: Session = Depends(get_db)):
         return build_user_response(user, db)
     except Exception as e:
         logger.error(f"Unexpected error fetching user by Email: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="An unexpected error occurred while retrieving the user",
-        )
+        raise DatabaseError("Unexpected error occurred while retrieving user")
