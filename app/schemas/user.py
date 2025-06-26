@@ -100,7 +100,7 @@ class User(UserBase):
     student: Optional[Student] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ScoreLevel(BaseModel):
@@ -121,4 +121,4 @@ class UserResponse(UserBase):
     level: Optional[ScoreLevel] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -8,7 +8,9 @@ from app.utils.scheduler import start_scheduler
 import logging
 
 # routes
+from app.api.v1.routes import auth
 from app.api.v1.routes import user
+
 
 logger = logging.getLogger(__name__)
 
@@ -36,8 +38,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-
-app.include_router(user.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api")
+app.include_router(user.router, prefix="/api")
 
 
 @app.exception_handler(RequestValidationError)
