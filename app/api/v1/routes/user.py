@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.schemas.user import UserFullCreate, User as UserSchema
 from app.crud.crud_user import crud_user
@@ -44,10 +44,26 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     try:
         user = crud_user.get_user_by_id(db, user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            return NotFoundError("User not found")
         return build_user_response(user, db)
     except Exception as e:
         logger.error(f"Unexpected error fetching user by ID: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred while retrieving the user",
+        )
+
+
+# get user by email
+@router.get("/get")
+def get_user_by_email(email: str = Query(...), db: Session = Depends(get_db)):
+    try:
+        user = crud_user.get_user_by_email(db, email)
+        if not user:
+            return NotFoundError("User with email not found")
+        return build_user_response(user, db)
+    except Exception as e:
+        logger.error(f"Unexpected error fetching user by Email: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail="An unexpected error occurred while retrieving the user",

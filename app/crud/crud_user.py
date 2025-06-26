@@ -85,7 +85,8 @@ class CRUDUser:
     # get user by email
     def get_user_by_email(self, db: Session, email: str) -> Optional[UserSchema]:
         try:
-            return db.query(User).filter(User.email == email.lower().strip()).first()
+            clean_email = email.lower().strip()
+            return db.query(User).filter(User.email == clean_email).first()
 
         except SQLAlchemyError as e:
             logger.error(f"Error fetching user by email: {str(e)}")
@@ -94,7 +95,7 @@ class CRUDUser:
     # get user by nic
     def get_user_by_nic(self, db: Session, nic: str) -> Optional[UserSchema]:
         try:
-            return db.query(User).filter(User.nic == nic).first()
+            return db.query(User).filter(User.nic == nic.strip()).first()
 
         except SQLAlchemyError as e:
             logger.error(f"Error fetching user by nic: {str(e)}")
