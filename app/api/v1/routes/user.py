@@ -69,5 +69,22 @@ def get_teachers(db: Session = Depends(get_db)):
 
         return formatted_teachers
     except Exception as e:
-        logger.error(f"Unexpected error fetching user by Email: {str(e)}")
-        raise DatabaseError("Unexpected error occurred while retrieving user")
+        logger.error(f"Unexpected error fetching Teachers: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving Teachers")
+
+
+# get students
+@router.get("/students")
+def get_students(db: Session = Depends(get_db)):
+    try:
+        students = crud_user.get_students(db)
+        if not students:
+            return NotFoundError("Students not found")
+        formatted_students = []
+        for student in students:
+            formatted_students.append(build_user_response(student, db))
+
+        return formatted_students
+    except Exception as e:
+        logger.error(f"Unexpected error fetching Students: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving Students")
