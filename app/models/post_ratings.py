@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Float
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 from datetime import datetime
@@ -11,6 +11,7 @@ class PostRatings(Base):
     post_id = Column(Integer, ForeignKey("posts.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
     type = Column(String(255), default="post")
+    ratings = Column(Float, default=1)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     post = relationship("Post", back_populates="post_rating")
