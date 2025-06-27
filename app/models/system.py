@@ -20,3 +20,13 @@ class ScoreLevels(Base):
     name = Column(String(50))
     image = Column(String(255))
     max_limit = Column(Integer)
+
+
+class ReactionTypes(Base):
+    __tablename__ = "reaction_types"
+
+    id = Column(Integer, primary_key=True)
+    icon = Column(String(255))
+    name = Column(String(255))
+
+    post_reaction = relationship("PostReactions", back_populates="reaction_type")

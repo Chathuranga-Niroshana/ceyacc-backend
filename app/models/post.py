@@ -27,3 +27,6 @@ class Post(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", back_populates="post")
+    comment = relationship("Comments", back_populates="post")
+    post_reaction = relationship("PostReactions", back_populates="post")
+    post_rating = relationship("PostRatings", back_populates="post")

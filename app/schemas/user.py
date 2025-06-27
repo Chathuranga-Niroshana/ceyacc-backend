@@ -10,13 +10,6 @@ class SexEnum(str, Enum):
     OTHER = "other"
 
 
-class TeachingExperienceEnum(str, Enum):
-    BEGINNER = "0-1 Years"
-    INTERMEDIATE = "1-4 Years"
-    EXPERIENCED = "4-10 Years"
-    MASTER = "10+ Years"
-
-
 class UserBase(BaseModel):
     image: Optional[str] = None
     cover_image: Optional[str] = None
@@ -42,7 +35,7 @@ class UserCreate(UserBase):
 
 class TeacherCreate(BaseModel):
     subjects_taught: List[str]
-    teaching_experience: Optional[TeachingExperienceEnum] = None
+    teaching_experience: Optional[str] = None
 
 
 class StudentCreate(BaseModel):
@@ -77,7 +70,7 @@ class UserUpdate(BaseModel):
 class Teacher(BaseModel):
     id: int
     subjects_taught: List[str]
-    teaching_experience: Optional[TeachingExperienceEnum] = None
+    teaching_experience: Optional[str] = None
 
     class Config:
         from_attributes = True
