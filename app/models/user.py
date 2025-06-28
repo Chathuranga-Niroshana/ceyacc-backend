@@ -40,6 +40,10 @@ class User(Base):
     user_role = relationship("UserRoles", back_populates="users")
     teacher = relationship("Teacher", back_populates="user", uselist=False)
     student = relationship("Student", back_populates="user", uselist=False)
+    post = relationship("Post", back_populates="user")
+    comment = relationship("Comments", back_populates="user")
+    post_reaction = relationship("PostReactions", back_populates="user")
+    post_rating = relationship("PostRatings", back_populates="user")
 
 
 class Teacher(Base):

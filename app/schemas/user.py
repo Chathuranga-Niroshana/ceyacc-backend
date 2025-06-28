@@ -10,13 +10,6 @@ class SexEnum(str, Enum):
     OTHER = "other"
 
 
-class TeachingExperienceEnum(str, Enum):
-    BEGINNER = "0-1 Years"
-    INTERMEDIATE = "1-4 Years"
-    EXPERIENCED = "4-10 Years"
-    MASTER = "10+ Years"
-
-
 class UserBase(BaseModel):
     image: Optional[str] = None
     cover_image: Optional[str] = None
@@ -42,7 +35,7 @@ class UserCreate(UserBase):
 
 class TeacherCreate(BaseModel):
     subjects_taught: List[str]
-    teaching_experience: Optional[TeachingExperienceEnum] = None
+    teaching_experience: Optional[str] = None
 
 
 class StudentCreate(BaseModel):
@@ -77,7 +70,7 @@ class UserUpdate(BaseModel):
 class Teacher(BaseModel):
     id: int
     subjects_taught: List[str]
-    teaching_experience: Optional[TeachingExperienceEnum] = None
+    teaching_experience: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -119,6 +112,52 @@ class UserResponse(UserBase):
     teacher: Optional[Teacher] = None
     student: Optional[Student] = None
     level: Optional[ScoreLevel] = None
+
+    class Config:
+        from_attributes = True
+
+
+class TeacherListResponse(BaseModel):
+    id: int
+    created_at: datetime
+    name: str
+    level: ScoreLevel
+    teacher: Teacher
+    system_score: float
+    school_name: str
+    address_line_one: str
+    city: str
+    province: str
+    dob: datetime
+    image: Optional[str] = None
+    cover_image: Optional[str] = None
+    bio: Optional[str] = None
+    is_verified: Optional[bool] = None
+    role_id: Optional[int] = None
+    sex: Optional[SexEnum] = None
+
+    class Config:
+        from_attributes = True
+
+
+class StudentListResponse(BaseModel):
+    id: int
+    created_at: datetime
+    name: str
+    level: ScoreLevel
+    student: Student
+    system_score: float
+    school_name: str
+    address_line_one: str
+    city: str
+    province: str
+    dob: datetime
+    image: Optional[str] = None
+    cover_image: Optional[str] = None
+    bio: Optional[str] = None
+    is_verified: Optional[bool] = None
+    role_id: Optional[int] = None
+    sex: Optional[SexEnum] = None
 
     class Config:
         from_attributes = True

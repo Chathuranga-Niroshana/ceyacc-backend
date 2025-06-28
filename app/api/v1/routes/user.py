@@ -6,7 +6,11 @@ from app.crud.crud_user import crud_user
 from sqlalchemy.exc import IntegrityError
 from app.core.exceptions import ValidationError, DatabaseError, NotFoundError
 from app.db.deps import get_db
-from app.services.user_response_builder import build_user_response
+from app.services.user_response_builder import (
+    build_user_response,
+    build_student_list_response,
+    build_teacher_list_response,
+)
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -23,19 +27,10 @@ async def register_user(user_in: UserFullCreate, db: Session = Depends(get_db)):
 
     except ValidationError as e:
         logger.warning(f"Validation error in user registration: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    except DatabaseError as e:
-        logger.error(f"Database error in user registration: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to register user",
-        )
+        raise ValidationError(str(e))
     except Exception as e:
         logger.error(f"Unexpected error in user registration: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred",
-        )
+        raise DatabaseError("Unexpected error occurred while creating user")
 
 
 # get user by id
@@ -48,10 +43,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
         return build_user_response(user, db)
     except Exception as e:
         logger.error(f"Unexpected error fetching user by ID: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="An unexpected error occurred while retrieving the user",
-        )
+        raise DatabaseError("Unexpected error occurred while retrieving user by id")
 
 
 # get user by email
@@ -64,7 +56,39 @@ def get_user_by_email(email: str = Query(...), db: Session = Depends(get_db)):
         return build_user_response(user, db)
     except Exception as e:
         logger.error(f"Unexpected error fetching user by Email: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="An unexpected error occurred while retrieving the user",
-        )
+        raise DatabaseError("Unexpected error occurred while retrieving user")
+
+
+# get teachers
+@router.get("/teachers")
+def get_teachers(db: Session = Depends(get_db)):
+    try:
+        teachers = crud_user.get_teachers(db)
+        if not teachers:
+            return NotFoundError("Teachers not found")
+        formatted_teachers = []
+        for teacher in teachers:
+            formatted_teacher = build_teacher_list_response(teacher, db)
+            formatted_teachers.append(formatted_teacher)
+
+        return formatted_teachers
+    except Exception as e:
+        logger.error(f"Unexpected error fetching Teachers: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving Teachers")
+
+
+# get students
+@router.get("/students")
+def get_students(db: Session = Depends(get_db)):
+    try:
+        students = crud_user.get_students(db)
+        if not students:
+            return NotFoundError("Students not found")
+        formatted_students = []
+        for student in students:
+            formatted_students.append(build_student_list_response(student, db))
+
+        return formatted_students
+    except Exception as e:
+        logger.error(f"Unexpected error fetching Students: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving Students")

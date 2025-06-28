@@ -9,3 +9,9 @@ ROLE_NAME_MAP = {
     ROLE_TEACHER: "teacher",
     ROLE_ADMIN: "admin",
 }
+
+DEFAULT_ROLES_FOR_DB = [
+    {"id": 1, "name": "student"},
+    {"id": 2, "name": "teacher"},
+    {"id": 3, "name": "admin"},
+]

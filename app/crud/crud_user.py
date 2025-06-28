@@ -82,6 +82,22 @@ class CRUDUser:
             logger.error(f"Error fetching user by id: {str(e)}")
             raise DatabaseError("Failed to fetch user by id")
 
+    # get teachers
+    def get_teachers(self, db: Session):
+        try:
+            return db.query(User).filter(User.role_id == ROLE_TEACHER).all()
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching teachers: {str(e)}")
+            raise DatabaseError("Failed to fetch teachers")
+
+    # get students
+    def get_students(self, db: Session):
+        try:
+            return db.query(User).filter(User.role_id == ROLE_STUDENT).all()
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching students: {str(e)}")
+            raise DatabaseError("Failed to fetch students")
+
     # get user by email
     def get_user_by_email(self, db: Session, email: str) -> Optional[UserSchema]:
         try:

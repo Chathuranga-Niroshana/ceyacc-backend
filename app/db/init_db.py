@@ -1,85 +1,28 @@
 from sqlalchemy.orm import Session
-from app.models.system import UserRoles, ScoreLevels
+from app.models.system import UserRoles, ScoreLevels, ReactionTypes
+from app.constants.roles import DEFAULT_ROLES_FOR_DB
+from app.constants.user_levels import DEFAULT_USER_LEVELS
+from app.constants.reaction_types import DEFAULT_REACTION_TYPES
+
+
+def init_model_defaults(db: Session, model, default_data: list):
+    existing_ids = {row.id for row in db.query(model.id).all()}
+    new_entries = [
+        model(**item) for item in default_data if item["id"] not in existing_ids
+    ]
+
+    if new_entries:
+        db.add_all(new_entries)
+        db.commit()
 
 
 def init_default_roles(db: Session):
-    default_roles = [
-        {"id": 1, "name": "student"},
-        {"id": 2, "name": "teacher"},
-        {"id": 3, "name": "admin"},
-    ]
-    for role in default_roles:
-        exists = db.query(UserRoles).filter_by(id=role["id"]).first()
-        if not exists:
-            db.add(UserRoles(**role))
-    db.commit()
+    init_model_defaults(db, UserRoles, DEFAULT_ROLES_FOR_DB)
 
 
 def init_score_levels(db: Session):
-    default_levels = [
-        {
-            "id": 1,
-            "name": "Novice Scout",
-            "image": "https://img.icons8.com/color/96/compass.png",
-            "max_limit": 100,
-        },
-        {
-            "id": 2,
-            "name": "Apprentice",
-            "image": "https://img.icons8.com/color/96/open-book--v1.png",
-            "max_limit": 250,
-        },
-        {
-            "id": 3,
-            "name": "Code Knight",
-            "image": "https://img.icons8.com/color/96/medieval-crown.png",
-            "max_limit": 500,
-        },
-        {
-            "id": 4,
-            "name": "Tech Ranger",
-            "image": "https://img.icons8.com/color/96/worldwide-location.png",
-            "max_limit": 800,
-        },
-        {
-            "id": 5,
-            "name": "Quiz Wizard",
-            "image": "https://img.icons8.com/color/96/magic-wand.png",
-            "max_limit": 1200,
-        },
-        {
-            "id": 6,
-            "name": "Knowledge Ninja",
-            "image": "https://img.icons8.com/color/96/ninja.png",
-            "max_limit": 1600,
-        },
-        {
-            "id": 7,
-            "name": "Mastermind",
-            "image": "https://img.icons8.com/color/96/brain.png",
-            "max_limit": 2200,
-        },
-        {
-            "id": 8,
-            "name": "Elite Scholar",
-            "image": "https://img.icons8.com/color/96/graduation-cap.png",
-            "max_limit": 3000,
-        },
-        {
-            "id": 9,
-            "name": "Legend",
-            "image": "https://img.icons8.com/color/96/trophy.png",
-            "max_limit": 4000,
-        },
-        {
-            "id": 10,
-            "name": "Grandmaster",
-            "image": "https://img.icons8.com/color/96/medal2.png",
-            "max_limit": 6000,
-        },
-    ]
-    for level in default_levels:
-        exists = db.query(ScoreLevels).filter_by(id=level["id"]).first()
-        if not exists:
-            db.add(ScoreLevels(**level))
-    db.commit()
+    init_model_defaults(db, ScoreLevels, DEFAULT_USER_LEVELS)
+
+
+def init_default_reaction_types(db: Session):
+    init_model_defaults(db, ReactionTypes, DEFAULT_REACTION_TYPES)
