@@ -37,6 +37,11 @@ class CommentResponse(BaseModel):
 CommentResponse.update_forward_refs()
 
 
+class ReactionCreate(BaseModel):
+    reaction_type_id: int
+    post_id: int
+
+
 class ReactionResponse(BaseModel):
     id: int
     reaction_type_id: int

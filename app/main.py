@@ -4,7 +4,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from app.db.session import SessionLocal
-from app.db.init_db import init_default_roles, init_score_levels
+from app.db.init_db import (
+    init_default_roles,
+    init_score_levels,
+    init_default_reaction_types,
+)
 from app.utils.scheduler import start_scheduler
 from app.middleware.auth_middleware import AuthMiddleware
 from app.core.exceptions import (
@@ -21,6 +25,7 @@ from app.api.v1.routes import auth
 from app.api.v1.routes import user
 from app.api.v1.routes import post
 from app.api.v1.routes import comment
+from app.api.v1.routes import post_react
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +36,7 @@ async def lifespan(app: FastAPI):
     try:
         init_default_roles(db)
         init_score_levels(db)
+        init_default_reaction_types(db)
         start_scheduler()
         print("[Startup] Initialized default roles, score levels, and scheduler.")
         yield
@@ -54,6 +60,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(post.router, prefix="/api")
 app.include_router(comment.router, prefix="/api")
+app.include_router(post_react.router, prefix="/api")
 
 
 @app.exception_handler(NotFoundError)
