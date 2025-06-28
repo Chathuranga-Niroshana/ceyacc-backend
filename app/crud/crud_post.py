@@ -87,5 +87,50 @@ class CRUDPost:
             logger.error(f"Error fetching post by id: {str(e)}")
             raise DatabaseError("Failed to fetch post by id")
 
+    # get all
+    def get_posts(self, db: Session, user_id: int):
+        try:
+            posts = db.query(Post)
+            if not posts:
+                raise NotFoundError("Posts not found")
+
+            response_posts = []
+            for post in posts:
+                if not post.is_public and post.user_id != user_id:
+                    continue
+
+                comments_count = len(post.comment)
+                reaction_count = len(post.post_reaction)
+                avg_ratings = (
+                    sum(r.ratings for r in post.post_rating) / len(post.post_rating)
+                    if post.post_rating
+                    else 0.0
+                )
+                posted_user = {
+                    "id": post.user_id,
+                    "name": post.user.name,
+                    "image": post.user.image or None,
+                }
+
+                formatted_post = PostResponse(
+                    id=post.id,
+                    media_type=post.media_type,
+                    media_link=post.media_link,
+                    title=post.title,
+                    description=post.description,
+                    is_public=post.is_public,
+                    user=posted_user,
+                    created_at=post.created_at,
+                    updated_at=post.updated_at,
+                    comments_number=comments_count or 0,
+                    reaction_number=reaction_count or 0,
+                    post_ratings=avg_ratings,
+                )
+                response_posts.append(formatted_post)
+            return response_posts
+        except SQLAlchemyError as e:
+            logger.error(f"Error fetching post by id: {str(e)}")
+            raise DatabaseError("Failed to fetch post by id")
+
 
 crud_post = CRUDPost()

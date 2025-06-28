@@ -13,6 +13,7 @@ from app.db.deps import get_db
 from fastapi.responses import JSONResponse
 from app.constants.score_update_values import SCORE_UPDATE_VALUES
 from app.services.interaction_score_update import update_user_score
+from typing import Optional, List
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/posts", tags=["Posts"])
@@ -60,3 +61,25 @@ async def get_post_by_id(request: Request, post_id: int, db: Session = Depends(g
     except Exception as e:
         logger.error(f"Unexpected error fetching post by ID: {str(e)}")
         raise DatabaseError("Unexpected error occurred while retrieving post")
+
+
+# get by id
+@router.get(
+    "/get_all", response_model=List[PostResponse], status_code=status.HTTP_200_OK
+)
+async def get_post_by_id(request: Request, db: Session = Depends(get_db)):
+    try:
+        user = request.state.user
+        posts = crud_post.get_posts(db=db, user_id=user.id)
+        if not posts:
+            raise NotFoundError("Posts not available")
+        return posts
+    except NotFoundError as e:
+        logger.warning(str(e))
+        raise e
+    except AuthorizationError as e:
+        logger.warning(str(e))
+        raise e
+    except Exception as e:
+        logger.error(f"Unexpected error fetching posts: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving posts")
