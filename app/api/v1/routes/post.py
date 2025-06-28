@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
+from fastapi import APIRouter, Depends, status, Request
 from sqlalchemy.orm import Session
 from app.schemas.post import PostCreate, PostResponse
 from app.crud.crud_post import crud_post
@@ -10,10 +10,9 @@ from app.core.exceptions import (
     AuthorizationError,
 )
 from app.db.deps import get_db
-from fastapi.responses import JSONResponse
 from app.constants.score_update_values import SCORE_UPDATE_VALUES
 from app.services.interaction_score_update import update_user_score
-from typing import Optional, List
+from typing import List
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/posts", tags=["Posts"])

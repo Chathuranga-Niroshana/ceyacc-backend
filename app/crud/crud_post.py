@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.post import Post
-from app.models.user import User
 from app.schemas.post import PostCreate, PostResponse
-from typing import Optional, List
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from app.core.exceptions import (
     DatabaseError,

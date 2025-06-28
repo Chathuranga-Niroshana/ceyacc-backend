@@ -12,6 +12,15 @@ class UserPreview(BaseModel):
         from_attributes = True
 
 
+class CommentCreate(BaseModel):
+    comment: str
+    post_id: int
+    parent_comment_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+
 class CommentResponse(BaseModel):
     id: int
     comment: str
@@ -26,6 +35,11 @@ class CommentResponse(BaseModel):
 
 
 CommentResponse.update_forward_refs()
+
+
+class ReactionCreate(BaseModel):
+    reaction_type_id: int
+    post_id: int
 
 
 class ReactionResponse(BaseModel):
