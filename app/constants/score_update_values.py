@@ -1,0 +1,6 @@
+SCORE_UPDATE_VALUES = {
+    "CREATE_POST": 20,
+    "REACT_POST": 5,
+    "COMMENT_POST": 5,
+    "RATE_POST": 5,
+}

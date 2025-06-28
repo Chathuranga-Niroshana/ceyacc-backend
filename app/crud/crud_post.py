@@ -4,7 +4,12 @@ from app.models.user import User
 from app.schemas.post import PostCreate, PostResponse
 from typing import Optional, List
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from app.core.exceptions import DatabaseError, ValidationError, NotFoundError
+from app.core.exceptions import (
+    DatabaseError,
+    ValidationError,
+    NotFoundError,
+    AuthorizationError,
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -41,11 +46,14 @@ class CRUDPost:
             raise DatabaseError("An unexpected error occurred")
 
     # get by id
-    def get_post_by_id(self, db: Session, post_id: int):
+    def get_post_by_id(self, db: Session, post_id: int, user_id: int):
         try:
             post = db.get(Post, post_id)
             if not post:
                 raise NotFoundError("Post not found")
+
+            if not post.is_public and post.user_id != user_id:
+                raise AuthorizationError("Not Authorized to view")
 
             comments_count = len(post.comment)
             reaction_count = len(post.post_reaction)

@@ -12,6 +12,7 @@ from app.core.exceptions import (
     DatabaseError,
     AuthenticationError,
     ValidationError,
+    AuthorizationError,
 )
 
 
@@ -72,6 +73,14 @@ async def database_exception_handler(request: Request, exc: DatabaseError):
 async def auth_exception_handler(request: Request, exc: AuthenticationError):
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
+        content={"detail": str(exc)},
+    )
+
+
+@app.exception_handler(AuthorizationError)
+async def auth_exception_handler(request: Request, exc: AuthorizationError):
+    return JSONResponse(
+        status_code=status.HTTP_403_FORBIDDEN,
         content={"detail": str(exc)},
     )
 
