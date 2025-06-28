@@ -3,21 +3,15 @@ from typing import Optional, List
 from datetime import datetime
 
 
-# ----------------------------------------
-# Basic User Info (minimal for responses)
-# ----------------------------------------
 class UserPreview(BaseModel):
     id: int
     name: str
     image: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-# ----------------------------------------
-# Comment Model (with recursive replies)
-# ----------------------------------------
 class CommentResponse(BaseModel):
     id: int
     comment: str
@@ -28,16 +22,12 @@ class CommentResponse(BaseModel):
     replies: Optional[List["CommentResponse"]] = []  # recursive replies
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-# Required for recursive model
 CommentResponse.update_forward_refs()
 
 
-# ----------------------------------------
-# Reaction Model
-# ----------------------------------------
 class ReactionResponse(BaseModel):
     id: int
     reaction_type_id: int
@@ -45,7 +35,7 @@ class ReactionResponse(BaseModel):
     user: UserPreview
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class RatingResponse(BaseModel):
@@ -56,16 +46,19 @@ class RatingResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-class PostResponse(BaseModel):
-    id: int
+class PostCreate(BaseModel):
     media_link: Optional[str] = None
     media_type: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
     is_public: Optional[bool] = True
+
+
+class PostResponse(PostCreate):
+    id: int
     created_at: datetime
     updated_at: datetime
 
@@ -79,4 +72,4 @@ class PostResponse(BaseModel):
     post_ratings: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True

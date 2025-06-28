@@ -18,7 +18,7 @@ from app.core.exceptions import (
 # routes
 from app.api.v1.routes import auth
 from app.api.v1.routes import user
-
+from app.api.v1.routes import post
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +50,7 @@ app = FastAPI(
 app.add_middleware(AuthMiddleware)
 app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
+app.include_router(post.router, prefix="/api")
 
 
 @app.exception_handler(NotFoundError)
