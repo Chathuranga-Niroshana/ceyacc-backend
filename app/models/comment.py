@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from app.db.base import Base
 from datetime import datetime
 
@@ -11,9 +11,14 @@ class Comments(Base):
     post_id = Column(Integer, ForeignKey("posts.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
     comment = Column(String(255))
-    parent_comment_id = Column(Integer, nullable=True)
+    parent_comment_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     post = relationship("Post", back_populates="comment")
     user = relationship("User", back_populates="comment")
+    replies = relationship(
+        "Comments",
+        backref=backref("parent", remote_side=[id]),
+        cascade="all, delete-orphan",
+    )

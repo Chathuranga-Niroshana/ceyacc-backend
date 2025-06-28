@@ -20,6 +20,7 @@ from app.core.exceptions import (
 from app.api.v1.routes import auth
 from app.api.v1.routes import user
 from app.api.v1.routes import post
+from app.api.v1.routes import comment
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +53,7 @@ app.add_middleware(AuthMiddleware)
 app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(post.router, prefix="/api")
+app.include_router(comment.router, prefix="/api")
 
 
 @app.exception_handler(NotFoundError)
