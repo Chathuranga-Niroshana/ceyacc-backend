@@ -44,6 +44,10 @@ class User(Base):
     comment = relationship("Comments", back_populates="user")
     post_reaction = relationship("PostReactions", back_populates="user")
     post_rating = relationship("PostRatings", back_populates="user")
+    event = relationship("Event", back_populates="user")
+    event_interests = relationship("EventInterests", back_populates="user")
+    quizzes = relationship("Quiz", back_populates="user")
+    quiz_interactions = relationship("QuizInteraction", back_populates="user")
 
 
 class Teacher(Base):

@@ -26,6 +26,7 @@ from app.api.v1.routes import user
 from app.api.v1.routes import post
 from app.api.v1.routes import comment
 from app.api.v1.routes import post_react
+from app.api.v1.routes import event
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +62,7 @@ app.include_router(user.router, prefix="/api")
 app.include_router(post.router, prefix="/api")
 app.include_router(comment.router, prefix="/api")
 app.include_router(post_react.router, prefix="/api")
+app.include_router(event.router, prefix="/api")
 
 
 @app.exception_handler(NotFoundError)
