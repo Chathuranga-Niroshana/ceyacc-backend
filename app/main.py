@@ -1,6 +1,7 @@
 import logging
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from app.db.session import SessionLocal
@@ -18,6 +19,7 @@ from app.core.exceptions import (
     ValidationError,
     AuthorizationError,
 )
+from app.core.config import settings
 
 
 # routes
@@ -57,6 +59,14 @@ app = FastAPI(
 
 
 app.add_middleware(AuthMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CLIENT_URL,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(post.router, prefix="/api")
