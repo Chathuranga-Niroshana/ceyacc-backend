@@ -4,3 +4,5 @@ from app.models.post import Post
 from app.models.comment import Comments
 from app.models.post_reaction import PostReactions
 from app.models.post_ratings import PostRatings
+from app.models.events import Event, EventInterests
+from app.models.quiz import Quiz, QuizInteraction

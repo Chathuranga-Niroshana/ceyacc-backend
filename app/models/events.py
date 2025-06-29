@@ -20,4 +20,18 @@ class Event(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user = relationship("User", back_populates="post_rating")
+    user = relationship("User", back_populates="event")
+    event_interests = relationship("EventInterests", back_populates="event")
+
+
+class EventInterests(Base):
+    __tablename__ = "event_interests"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    interest_type = Column(String(255), default="INTERESTED")
+    user_id = Column(Integer, ForeignKey("users.id"))
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="event_interests")
+    event = relationship("Event", back_populates="event_interests")

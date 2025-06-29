@@ -24,4 +24,18 @@ class Quiz(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     visibility = Column(Boolean, default=True)
 
-    user = relationship("User", back_populates="post_rating")
+    user = relationship("User", back_populates="quizzes")
+    quiz_interactions = relationship("QuizInteraction", back_populates="quizzes")
+
+
+class QuizInteraction(Base):
+    __tablename__ = "quiz_interactions"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    quiz_id = Column(Integer, ForeignKey("quizzes.id"))
+    answer_id = Column(Integer)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="quiz_interactions")
+    quizzes = relationship("Quiz", back_populates="quiz_interactions")
