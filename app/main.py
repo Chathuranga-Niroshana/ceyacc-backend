@@ -1,6 +1,5 @@
 import logging
 from fastapi import FastAPI, Request, status
-from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
@@ -61,7 +60,8 @@ app = FastAPI(
 app.add_middleware(AuthMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CLIENT_URL,
+    # allow_origins=settings.CLIENT_URL,
+    allow_origins="http://localhost:5173",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -106,8 +106,8 @@ async def auth_exception_handler(request: Request, exc: AuthorizationError):
     )
 
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+@app.exception_handler(ValidationError)
+async def validation_exception_handler(request: Request, exc: ValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
