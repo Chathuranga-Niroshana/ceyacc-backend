@@ -69,6 +69,10 @@ class CRUDUser:
             db.rollback()
             logger.error(f"Database error creating user: {str(e)}")
             raise DatabaseError("Failed to create user")
+        except ValidationError as e:
+            db.rollback()
+            logger.error(f"Unexpected error creating user: {str(e)}")
+            raise ValidationError("User with this email or NIC already exists")
         except Exception as e:
             db.rollback()
             logger.error(f"Unexpected error creating user: {str(e)}")
@@ -121,9 +125,10 @@ class CRUDUser:
         existing_email = self.get_user_by_email(db, email)
         if existing_email:
             return existing_email
-        existing_nic = self.get_user_by_nic(db, nic)
-        if existing_nic:
-            return existing_nic
+        if nic:
+            existing_nic = self.get_user_by_nic(db, nic)
+            if existing_nic:
+                return existing_nic
         return None
 
 
