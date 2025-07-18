@@ -15,5 +15,7 @@ SCORE_UPDATE_VALUES = {
     "UPDATE_EXAM_PAPER": 10,
     "DELETE_EXAM_PAPER": 10,
     "VIEW_EXAM_PAPER": 5,
-    
+    # courses
+    "CREATE_COURSE": 35,
+    "VIEW_COURSE": 30,
 }
