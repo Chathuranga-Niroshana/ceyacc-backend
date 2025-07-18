@@ -91,7 +91,7 @@ async def database_exception_handler(request: Request, exc: DatabaseError):
 
 
 @app.exception_handler(AuthenticationError)
-async def auth_exception_handler(request: Request, exc: AuthenticationError):
+async def authorization_exception_handler(request: Request, exc: AuthenticationError):
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": str(exc)},
@@ -110,11 +110,7 @@ async def auth_exception_handler(request: Request, exc: AuthorizationError):
 async def validation_exception_handler(request: Request, exc: ValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={
-            "message": "Validation failed",
-            "errors": exc.errors(),
-            "body": exc.body,
-        },
+        content={"message": "Validation failed", "detail": str(exc)},
     )
 
 
