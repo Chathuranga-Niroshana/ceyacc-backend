@@ -95,7 +95,7 @@ async def get_inactive_events(db: Session = Depends(get_db)):
     response_model=EventResponse,
     status_code=status.HTTP_200_OK,
 )
-async def get_event_by_id(event_id: int, db: Session = Depends(get_db)):
+async def get_event_interest_by_id(event_id: int, db: Session = Depends(get_db)):
     try:
         event = crud_events.get_event_by_id(db=db, event_id=event_id)
         if not event:
@@ -114,7 +114,7 @@ async def get_event_by_id(event_id: int, db: Session = Depends(get_db)):
 
 # create event interest
 @router.post("/interest/create/{event_id}", status_code=status.HTTP_201_CREATED)
-async def create_event(
+async def create_event_interest(
     request: Request,
     new_interest: EventInterestsCreate,
     event_id: int,

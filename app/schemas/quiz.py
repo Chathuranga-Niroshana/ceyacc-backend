@@ -1,7 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
-
 
 class UserPreview(BaseModel):
     id: int
@@ -11,36 +10,37 @@ class UserPreview(BaseModel):
     class Config:
         from_attributes = True
 
-
-class EventCreate(BaseModel):
+class QuizCreate(BaseModel):
     title: str
-    date_time: datetime
-    location: str
-    description: str
+    question: str
+    description: Optional[str] = None
     media_url_one: Optional[str] = None
     media_url_two: Optional[str] = None
     media_url_three: Optional[str] = None
-    media_url_four: Optional[str] = None
-    media_url_five: Optional[str] = None
+    answer_one: str
+    answer_two: str
+    answer_three: Optional[str] = None
+    answer_four: Optional[str] = None
+    answer_five: Optional[str] = None
+    correct_answer: int
+    visibility: Optional[bool] = True
 
     class Config:
         from_attributes = True
 
-
-class EventResponse(EventCreate):
-    user: UserPreview
+class QuizResponse(QuizCreate):
     id: int
+    user: UserPreview
     created_at: datetime
 
-
-class EventInterestsCreate(BaseModel):
-    interest_type: str
+class QuizInteractionCreate(BaseModel):
+    answer_id: int
 
     class Config:
         from_attributes = True
 
-
-class EventInterestResponse(EventInterestsCreate):
+class QuizInteractionResponse(QuizInteractionCreate):
     id: int
     user: Optional[UserPreview] = None
+    quiz_id: int
     created_at: datetime

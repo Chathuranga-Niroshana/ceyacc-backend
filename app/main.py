@@ -28,6 +28,9 @@ from app.api.v1.routes import post
 from app.api.v1.routes import comment
 from app.api.v1.routes import post_react
 from app.api.v1.routes import event
+from app.api.v1.routes import quiz
+from app.api.v1.routes import exam_paper
+from app.api.v1.routes import course
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +76,9 @@ app.include_router(post.router, prefix="/api")
 app.include_router(comment.router, prefix="/api")
 app.include_router(post_react.router, prefix="/api")
 app.include_router(event.router, prefix="/api")
-
+app.include_router(quiz.router, prefix="/api")
+app.include_router(exam_paper.router, prefix="/api")
+app.include_router(course.router, prefix="/api")
 
 @app.exception_handler(NotFoundError)
 async def not_found_exception_handler(request: Request, exc: NotFoundError):
@@ -91,7 +96,7 @@ async def database_exception_handler(request: Request, exc: DatabaseError):
 
 
 @app.exception_handler(AuthenticationError)
-async def auth_exception_handler(request: Request, exc: AuthenticationError):
+async def authorization_exception_handler(request: Request, exc: AuthenticationError):
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": str(exc)},
@@ -110,11 +115,7 @@ async def auth_exception_handler(request: Request, exc: AuthorizationError):
 async def validation_exception_handler(request: Request, exc: ValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={
-            "message": "Validation failed",
-            "errors": exc.errors(),
-            "body": exc.body,
-        },
+        content={"message": "Validation failed", "detail": str(exc)},
     )
 
 
