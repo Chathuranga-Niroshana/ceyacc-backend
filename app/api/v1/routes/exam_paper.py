@@ -71,10 +71,6 @@ async def update_exam_paper(exam_paper_id: int, exam_paper_update: ExamPaperUpda
     try:
         crud_exam_paper.update_exam_paper(db=db, exam_paper_id=exam_paper_id, exam_paper_update=exam_paper_update)
         logger.info("Exam paper updated")
-        new_score = update_user_score(
-            db=db, value=SCORE_UPDATE_VALUES["UPDATE_EXAM_PAPER"], user_id=user.id
-        )
-        logger.info(f"User {user.id} score after exam paper: {new_score}")
         return {"message": "Exam paper updated successfully"}
     except ValidationError as e:
         logger.warning(f"Validation error in exam paper update: {str(e)}")
