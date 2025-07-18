@@ -92,3 +92,14 @@ def get_students(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Unexpected error fetching Students: {str(e)}")
         raise DatabaseError("Unexpected error occurred while retrieving Students")
+
+
+# Most engaging users
+@router.get("/most_engaging", status_code=status.HTTP_200_OK)
+def get_most_engaging_users(db: Session = Depends(get_db)):
+    try:
+        users = crud_user.get_most_engaging_users(db)
+        return [build_user_response(user, db) for user in users]
+    except Exception as e:
+        logger.error(f"Unexpected error fetching most engaging users: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving most engaging users")

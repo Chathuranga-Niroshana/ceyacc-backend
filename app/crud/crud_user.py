@@ -121,6 +121,13 @@ class CRUDUser:
             logger.error(f"Error fetching user by nic: {str(e)}")
             raise DatabaseError("Failed to fetch user")
 
+    def get_most_engaging_users(self, db: Session, limit: int = 5):
+        try:
+            return db.query(User).order_by(User.system_score.desc()).limit(limit).all()
+        except Exception as e:
+            logger.error(f"Error fetching most engaging users: {str(e)}")
+            raise DatabaseError("Failed to fetch most engaging users")
+
     def _check_existing_user(self, db: Session, email: str, nic: str) -> Optional[User]:
         existing_email = self.get_user_by_email(db, email)
         if existing_email:
