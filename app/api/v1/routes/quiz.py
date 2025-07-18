@@ -11,7 +11,8 @@ from app.core.exceptions import (
 )
 from app.db.deps import get_db
 from typing import List
-
+from app.constants.score_update_values import SCORE_UPDATE_VALUES
+from app.services.interaction_score_update import update_user_score
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/quizzes", tags=["Quizzes"])
 
@@ -22,6 +23,10 @@ async def create_quiz(request: Request, new_quiz: QuizCreate, db: Session = Depe
         user = request.state.user
         crud_quiz.create_quiz(db=db, new_quiz=new_quiz, user_id=user.id)
         logger.info("Quiz created")
+        new_score = update_user_score(
+            db=db, value=SCORE_UPDATE_VALUES["CREATE_QUIZ"], user_id=user.id
+        )
+        logger.info(f"User {user.id} score after quiz: {new_score}")
         return {"message": "Quiz created successfully"}
     except ValidationError as e:
         logger.warning(f"Validation error in quiz create: {str(e)}")
@@ -75,6 +80,10 @@ async def update_quiz(request: Request, quiz_id: int, quiz_update: QuizCreate, d
         user = request.state.user
         crud_quiz.update_quiz(db=db, quiz_id=quiz_id, quiz_update=quiz_update, user_id=user.id)
         logger.info("Quiz updated")
+        new_score = update_user_score(
+            db=db, value=SCORE_UPDATE_VALUES["UPDATE_QUIZ"], user_id=user.id
+        )
+        logger.info(f"User {user.id} score after quiz: {new_score}")
         return {"message": "Quiz updated successfully"}
     except ValidationError as e:
         logger.warning(f"Validation error in quiz update: {str(e)}")
@@ -93,6 +102,10 @@ async def delete_quiz(request: Request, quiz_id: int, db: Session = Depends(get_
         user = request.state.user
         crud_quiz.delete_quiz(db=db, quiz_id=quiz_id, user_id=user.id)
         logger.info("Quiz deleted")
+        new_score = update_user_score(
+            db=db, value=SCORE_UPDATE_VALUES["DELETE_QUIZ"], user_id=user.id
+        )
+        logger.info(f"User {user.id} score after quiz: {new_score}")
         return {"message": "Quiz deleted successfully"}
     except NotFoundError as e:
         logger.warning(str(e))
@@ -111,6 +124,10 @@ async def create_quiz_interaction(request: Request, quiz_id: int, interaction: Q
         user = request.state.user
         response = crud_quiz.create_quiz_interaction(db=db, quiz_id=quiz_id, user_id=user.id, interaction=interaction)
         logger.info("Quiz interaction created")
+        new_score = update_user_score(
+            db=db, value=SCORE_UPDATE_VALUES["ANSWER_QUIZ"], user_id=user.id
+        )
+        logger.info(f"User {user.id} score after quiz: {new_score}")
         return response
     except ValidationError as e:
         logger.warning(f"Validation error in quiz interaction: {str(e)}")

@@ -11,16 +11,22 @@ from app.core.exceptions import (
 )
 from app.db.deps import get_db
 from typing import List
-
+from app.constants.score_update_values import SCORE_UPDATE_VALUES
+from app.services.interaction_score_update import update_user_score
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/exam_papers", tags=["Exam Papers"])
 
 # Create exam paper
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_exam_paper(new_exam_paper: ExamPaperCreate, db: Session = Depends(get_db)):
+async def create_exam_paper(request: Request, new_exam_paper: ExamPaperCreate, db: Session = Depends(get_db)):
     try:
+        user = request.state.user
         crud_exam_paper.create_exam_paper(db=db, new_exam_paper=new_exam_paper)
         logger.info("Exam paper created")
+        new_score = update_user_score(
+            db=db, value=SCORE_UPDATE_VALUES["CREATE_EXAM_PAPER"], user_id=user.id
+        )
+        logger.info(f"User {user.id} score after exam paper: {new_score}")
         return {"message": "Exam paper created successfully"}
     except ValidationError as e:
         logger.warning(f"Validation error in exam paper create: {str(e)}")
@@ -65,6 +71,10 @@ async def update_exam_paper(exam_paper_id: int, exam_paper_update: ExamPaperUpda
     try:
         crud_exam_paper.update_exam_paper(db=db, exam_paper_id=exam_paper_id, exam_paper_update=exam_paper_update)
         logger.info("Exam paper updated")
+        new_score = update_user_score(
+            db=db, value=SCORE_UPDATE_VALUES["UPDATE_EXAM_PAPER"], user_id=user.id
+        )
+        logger.info(f"User {user.id} score after exam paper: {new_score}")
         return {"message": "Exam paper updated successfully"}
     except ValidationError as e:
         logger.warning(f"Validation error in exam paper update: {str(e)}")
