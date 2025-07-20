@@ -78,6 +78,43 @@ class CRUDUser:
             logger.error(f"Unexpected error creating user: {str(e)}")
             raise DatabaseError("An unexpected error occurred")
 
+    # update user
+    def update_user(self, db: Session, user_id: int, user_update: UserUpdate) -> UserSchema:
+        try:
+            user = db.get(User, user_id)
+            if not user:
+                raise NotFoundError("User not found")
+            # Update user fields
+            for field, value in user_update.dict(exclude_unset=True).items():
+                if field == "password" and value:
+                    setattr(user, field, hash_password(value))
+                elif field not in ["teacher", "student"]:
+                    setattr(user, field, value)
+            # Update teacher info if present
+            if hasattr(user, "teacher") and user.teacher and hasattr(user_update, "teacher") and user_update.teacher:
+                for t_field, t_value in user_update.teacher.dict(exclude_unset=True).items():
+                    setattr(user.teacher, t_field, t_value)
+            # Update student info if present
+            if hasattr(user, "student") and user.student and hasattr(user_update, "student") and user_update.student:
+                for s_field, s_value in user_update.student.dict(exclude_unset=True).items():
+                    setattr(user.student, s_field, s_value)
+            db.commit()
+            db.refresh(user)
+            logger.info(f"User updated successfully: {user.email}")
+            return user
+        except IntegrityError as e:
+            db.rollback()
+            logger.error(f"Integrity error updating user: {str(e)}")
+            raise ValidationError("User with email or nic already exists")
+        except SQLAlchemyError as e:
+            db.rollback()
+            logger.error(f"Database error updating user: {str(e)}")
+            raise DatabaseError("Failed to update user")
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Unexpected error updating user: {str(e)}")
+            raise DatabaseError("An unexpected error occurred")
+
     # get user by id
     def get_user_by_id(self, db: Session, user_id: int) -> Optional[UserSchema]:
         try:

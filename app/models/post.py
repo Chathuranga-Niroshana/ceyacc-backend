@@ -11,7 +11,10 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 from datetime import datetime
+from pytz import timezone
 
+sri_lanka = timezone('Asia/Colombo')
+created_at = datetime.now(sri_lanka)
 
 class Post(Base):
     __tablename__ = "posts"
@@ -22,7 +25,7 @@ class Post(Base):
     title = Column(String(255))
     description = Column(String(255))
     is_public = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(sri_lanka))
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"))
 
