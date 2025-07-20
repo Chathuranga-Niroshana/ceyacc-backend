@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.schemas.user import User as UserSchema
 from app.db.deps import get_db
@@ -8,6 +8,8 @@ from app.crud.crud_auth import login_user as login
 from app.core.exceptions import NotFoundError, AuthenticationError, DatabaseError
 from app.schemas.auth import LoginRequest
 from fastapi.responses import JSONResponse
+from app.crud.crud_user import crud_user
+from app.services.user_response_builder import build_user_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -38,3 +40,17 @@ async def login_user(credentials: LoginRequest, db: Session = Depends(get_db)):
             status_code=500,
             content={"success": False, "message": "Unexpected error occurred"},
         )
+
+
+@router.get("/profile")
+def get_user_by_id(request: Request, db: Session = Depends(get_db)):
+    try:
+        request_user = request.state.user
+        user = crud_user.get_user_by_id(db, request_user.id)
+        print(user)
+        if not user:
+            return NotFoundError("User not found")
+        return build_user_response(user, db)
+    except Exception as e:
+        logger.error(f"Unexpected error fetching user by ID: {str(e)}")
+        raise DatabaseError("Unexpected error occurred while retrieving user by id")
